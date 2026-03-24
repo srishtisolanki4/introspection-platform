@@ -1,7 +1,12 @@
 package org.introspection.backend.repository;
 
-import org.introspection.backend.entity.Entry;
+
+import org.introspection.backend.entity.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface UserRepository extends MongoRepository<Entry,String>  {
+import java.util.Optional;
+
+public interface UserRepository extends MongoRepository<User,String>{
+     Optional<User> findByUserName(String userName);
 }
+
