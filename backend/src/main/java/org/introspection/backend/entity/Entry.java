@@ -3,6 +3,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.annotation.Id;
 import java.time.LocalDateTime;
@@ -22,13 +23,15 @@ public class Entry {
     private String content;
 
     private Mood mood;
-    private int energyLevel;
-    private int productivityScore;
-    private int sleepHours;
-    private int stressLevel;
+    private Integer energyLevel;
+    private Integer productivityScore;
+    private Integer sleepHours;
+    private Integer stressLevel;
 
     private List<String> activities;
     private List<String> tags;
+
+    @CreatedDate
     private LocalDateTime createdAt;
 
 }

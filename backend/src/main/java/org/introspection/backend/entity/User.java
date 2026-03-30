@@ -1,4 +1,5 @@
 package org.introspection.backend.entity;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ public class User {
     @Id
     private String id;
     @Indexed(unique = true)
+    @Pattern(regexp = "^[a-zA-Z0-9._-]+$", message = "Username must not contain spaces")
     private String userName;
     @Indexed(unique = true)
     private String email;
@@ -26,7 +28,4 @@ public class User {
     private String password;
     @CreatedDate
     private LocalDateTime createdAt;
-
-
-
 }
