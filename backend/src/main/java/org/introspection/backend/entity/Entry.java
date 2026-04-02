@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.annotation.Id;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.*;
 
 @Data
@@ -30,7 +31,7 @@ public class Entry {
 
     private List<String> activities;
     private List<String> tags;
-
+    private LocalDate date;
     @CreatedDate
     private LocalDateTime createdAt;
 

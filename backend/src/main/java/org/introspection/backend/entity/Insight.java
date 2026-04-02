@@ -6,8 +6,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.LocalDate;
+
 import java.util.*;
 
 @Data
@@ -18,9 +18,8 @@ public class Insight {
     @Id
     private String id;
     private String userId;
-    private LocalDateTime weekStart;
-    private LocalDateTime weekEnd;
-
+    private LocalDate weekStart;
+    private LocalDate weekEnd;
     private String summaryText;
     private Mood dominantMood;
     private double avgStressLevel;
