@@ -1,5 +1,6 @@
 package org.introspection.backend.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.introspection.backend.dto.EntryRequestDTO;
 import org.introspection.backend.dto.EntryResponseDTO;
@@ -23,35 +24,33 @@ public class EntryController {
 
 
     @PostMapping
-    public EntryResponseDTO createEntry(@RequestBody EntryRequestDTO dto){
-        Authentication auth= SecurityContextHolder.getContext().getAuthentication();
-        String email=auth.getName();
+    public ResponseEntity<?> createEntry(@Valid @RequestBody EntryRequestDTO dto, Authentication authentication){
+        String email=authentication.getName();
 
-        return entryService.createEntry(dto,email);
+        return new ResponseEntity<>(entryService.createEntry(dto, email), HttpStatus.CREATED);
     }
 
     @GetMapping()
-    public List<EntryResponseDTO> getAllEntries(){
-        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
-        String email=auth.getName();
+    public List<EntryResponseDTO> getAllEntries(Authentication authentication){
+        String email=authentication.getName();
         return entryService.getAll(email);
     }
 
     @PutMapping("/{id}")
-    public EntryResponseDTO updateEntry(@PathVariable String id, @RequestBody EntryRequestDTO dto){
-        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
-        String email=auth.getName();
+    public EntryResponseDTO updateEntry(@PathVariable String id, @Valid @RequestBody EntryRequestDTO dto,Authentication authentication){
+
+        String email=authentication.getName();
         return entryService.update(id,email,dto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteEntry(@PathVariable String id){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
+    public ResponseEntity<?> deleteEntry(@PathVariable String id,Authentication authentication){
+
+        String email = authentication.getName();
 
         entryService.deleteEntry(id, email);
 
-        return ResponseEntity.ok("Entry deleted successfully");
+        return ResponseEntity.noContent().build(); // 204
     }
 
 }

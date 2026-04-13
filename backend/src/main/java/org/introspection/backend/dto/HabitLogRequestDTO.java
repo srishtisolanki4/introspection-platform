@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import org.introspection.backend.entity.Mood;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,4 +15,5 @@ public class HabitLogRequestDTO {
     private String habitId;
     private boolean completed;
     private Mood moodPostHabit;
+    private LocalDate date;
 }

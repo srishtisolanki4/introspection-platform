@@ -33,6 +33,6 @@ public class Entry {
     private List<String> tags;
     private LocalDate date;
     @CreatedDate
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
 }

@@ -7,12 +7,14 @@ import org.introspection.backend.dto.EntryRequestDTO;
 import org.introspection.backend.dto.EntryResponseDTO;
 import org.introspection.backend.entity.Entry;
 import org.introspection.backend.entity.User;
+import org.introspection.backend.exception.ResourceNotFoundException;
+import org.introspection.backend.exception.UnauthorizedException;
 import org.introspection.backend.repository.EntryRepository;
 import org.introspection.backend.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +39,7 @@ public class EntryService {
 
     public EntryResponseDTO createEntry(EntryRequestDTO request,String email){
         User user=userRepository.findByEmail(email)
-                .orElseThrow(()-> new RuntimeException("User does not exist"));
+                .orElseThrow(()-> new ResourceNotFoundException("User does not exist"));
         Entry entry=new Entry();
         entry.setTitle(request.getTitle());
         entry.setContent(request.getContent());
@@ -49,7 +51,11 @@ public class EntryService {
         entry.setActivities(request.getActivities());
         entry.setUserId(user.getId());
         entry.setTags(request.getTags());
-        entry.setCreatedAt(LocalDateTime.now());
+        entry.setDate(
+                request.getDate() != null ? request.getDate() : LocalDate.now()
+        );
+        entry.setCreatedAt(LocalDate.now());
+
 
         Entry saved=entryRepository.save(entry);
 
@@ -58,7 +64,7 @@ public class EntryService {
 
     public List<EntryResponseDTO> getAll(String email){
         User user=userRepository.findByEmail(email)
-                .orElseThrow(()-> new RuntimeException("User not found"));
+                .orElseThrow(()-> new ResourceNotFoundException("User not found"));
 
         List<Entry> entries = entryRepository.findByUserId(user.getId());
 
@@ -70,17 +76,18 @@ public class EntryService {
 
     public EntryResponseDTO update(String id, String email , EntryRequestDTO request){
         User user= userRepository.findByEmail(email).
-                orElseThrow(()-> new RuntimeException("User not found"));
+                orElseThrow(()-> new ResourceNotFoundException("User not found"));
 
         Entry oldEntry=entryRepository.findById(id).
-                orElseThrow(()-> new RuntimeException("Entry not found"));
+                orElseThrow(()-> new ResourceNotFoundException("Entry not found"));
 
         if(!oldEntry.getUserId().equals(user.getId())){
-            throw new RuntimeException("Unauthorized");
+            throw new UnauthorizedException("You are not allowed to access this entry");
         }
 
-        
-        oldEntry.setTitle(request.getTitle());
+
+        if(request.getTitle() != null)
+            oldEntry.setTitle(request.getTitle());
         oldEntry.setContent(request.getContent());
         oldEntry.setMood(request.getMood());
         oldEntry.setEnergyLevel(request.getEnergyLevel());
@@ -90,7 +97,9 @@ public class EntryService {
         oldEntry.setActivities(request.getActivities());
         oldEntry.setUserId(user.getId());
         oldEntry.setTags(request.getTags());
-        oldEntry.setCreatedAt(LocalDateTime.now());
+        oldEntry.setDate(
+                request.getDate() != null ? request.getDate() : LocalDate.now()
+        );
 
         Entry saved=entryRepository.save(oldEntry);
 
@@ -99,13 +108,13 @@ public class EntryService {
 
     public void deleteEntry(String id, String email){
         User user= userRepository.findByEmail(email).
-                orElseThrow(()-> new RuntimeException("User not found"));
+                orElseThrow(()-> new ResourceNotFoundException("User not found"));
 
         Entry oldEntry=entryRepository.findById(id).
-                orElseThrow(()-> new RuntimeException("Entry not found"));
+                orElseThrow(()-> new ResourceNotFoundException("Entry not found"));
 
         if(!oldEntry.getUserId().equals(user.getId())){
-            throw new RuntimeException("Unauthorized");
+            throw new UnauthorizedException("You are not allowed to access this entry");
         }
 
         entryRepository.deleteById(id);

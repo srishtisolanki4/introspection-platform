@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import org.springframework.data.annotation.Id;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -27,5 +27,5 @@ public class User {
     @NonNull
     private String password;
     @CreatedDate
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 }

@@ -7,7 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -21,5 +21,5 @@ public class Habit {
     private Integer targetPerWeek;;
     private String description;
     @CreatedDate
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 }

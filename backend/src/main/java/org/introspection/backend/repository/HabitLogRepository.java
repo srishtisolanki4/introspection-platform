@@ -10,6 +10,11 @@ import java.util.Optional;
 public interface HabitLogRepository extends MongoRepository<HabitLog,String> {
 
     Optional<HabitLog> findByUserIdAndHabitIdAndDate(String userId, String habitId, LocalDate date);
+    List<HabitLog> findByUserIdAndDateBetween(
+            String userId,
+            LocalDate start,
+            LocalDate end
+    );
     List<HabitLog> findByUserIdAndHabitIdOrderByDateDesc(String userId,String habitId);
     List<HabitLog> findByUserIdAndDate(String userId, LocalDate date);
 }

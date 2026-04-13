@@ -7,6 +7,8 @@ import org.introspection.backend.entity.Habit;
 import org.introspection.backend.entity.User;
 import org.introspection.backend.dto.HabitRequestDTO;
 import org.introspection.backend.dto.HabitResponseDTO;
+import org.introspection.backend.exception.ResourceNotFoundException;
+import org.introspection.backend.exception.UnauthorizedException;
 import org.introspection.backend.repository.HabitRepository;
 import org.introspection.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -29,7 +31,7 @@ public class HabitService {
     }
     public HabitResponseDTO create(HabitRequestDTO dto,String email){
         User user=userRepository.findByEmail(email)
-                .orElseThrow(()->new RuntimeException("User not found"));
+                .orElseThrow(()->new ResourceNotFoundException("User not found"));
 
         Habit habit=new Habit();
         habit.setName(dto.getName());
@@ -43,7 +45,7 @@ public class HabitService {
     }
 
     public List<HabitResponseDTO> getAll(String email){
-        User user=userRepository.findByEmail(email).orElseThrow(()->new RuntimeException("User not found"));
+        User user=userRepository.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User not found"));
 
         List<Habit> habits=habitRepository.findByUserId(user.getId());
         return habits.stream().map(this::mapToDTO).toList();
@@ -51,12 +53,12 @@ public class HabitService {
 
     public HabitResponseDTO update(String id,String email ,HabitRequestDTO dto ){
         User user=userRepository.findByEmail(email)
-                .orElseThrow(()->new RuntimeException("User not found"));
+                .orElseThrow(()->new ResourceNotFoundException("User not found"));
         Habit oldHabit=habitRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("Habit not found"));
+                .orElseThrow(()->new ResourceNotFoundException("Habit not found"));
 
         if(!oldHabit.getUserId().equals(user.getId())){
-            throw new RuntimeException("Unauthorized");
+            throw new UnauthorizedException("You are not allowed to add habits");
         }
 
         oldHabit.setName(dto.getName());
@@ -70,12 +72,12 @@ public class HabitService {
 
     public void delete(String id,String email ){
         User user=userRepository.findByEmail(email)
-                .orElseThrow(()->new RuntimeException("User not found"));
+                .orElseThrow(()->new ResourceNotFoundException("User not found"));
         Habit oldHabit=habitRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("Habit not found"));
+                .orElseThrow(()->new ResourceNotFoundException("Habit not found"));
 
         if(!oldHabit.getUserId().equals(user.getId())){
-            throw new RuntimeException("Unauthorized");
+            throw new UnauthorizedException("You are not allowed to add habits");
         }
         habitRepository.delete(oldHabit);
     }
