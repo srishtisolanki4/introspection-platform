@@ -5,5 +5,5 @@ spring:
       auto-index-creation: true
 
 jwt:
-    secret: mySuperSecureJWTSecretKeyThatIsAtLeast32CharsLong123
+    secret: ${JWT_SECRET}
     expiration: 86400000

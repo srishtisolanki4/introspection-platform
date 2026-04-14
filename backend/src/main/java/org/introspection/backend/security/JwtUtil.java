@@ -26,7 +26,9 @@ public class JwtUtil {
     }
 
     public String generateToken(String email){
-        return Jwts.builder().setSubject(email)
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuer("introspection-app")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+expiration))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -34,26 +36,35 @@ public class JwtUtil {
     }
 
     public String extractEmail(String token){
-        return getClaims(token).getSubject();
+            return extractAllClaims(token).getSubject();
+
     }
 
     public boolean isTokenExpired(String token){
-        return getClaims(token).getExpiration().before(new Date());
+
+        return extractAllClaims(token).getExpiration().before(new Date());
     }
     public boolean validateToken(String token, String email) {
-        return (email.equals(extractEmail(token)) && !isTokenExpired(token));
+        Claims claims = extractAllClaims(token);
+
+        return (
+                email.equals(claims.getSubject()) &&
+                        "introspection-app".equals(claims.getIssuer()) &&
+                        !claims.getExpiration().before(new Date())
+        );
     }
 
-    @PostConstruct
-    public void debug() {
-        System.out.println("JWT SECRET = " + secret);
-    }
-    public Claims getClaims(String token){
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+
+    private Claims extractAllClaims(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid or expired JWT");
+        }
     }
 
 
